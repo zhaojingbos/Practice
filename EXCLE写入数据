@@ -1,0 +1,12 @@
+#有一个存着学生成绩的文件，里面存的是json串，json串读起来特别不直观，需要你写代码把它都写到excel中，并计算出总分和平均分，json格式如下
+import json
+import xlwt
+def excle():
+    workbook = xlwt.Workbook("utf-8")
+    worksheet = workbook.add_sheet('student')
+    student = open("student.txt", "r").read()
+    json_student = json.loads(student)
+    for k, y in json_student.items():
+        for x in range(len(json_student[k])):
+            worksheet.write(int(k),x, label=json_student[k][x])
+    workbook.save('student.xls')
