@@ -1,0 +1,27 @@
+#2、测试机器的磁盘太小，经常报警，要写一个清理日志的脚本，每次运行就把三天之前的日志删除，日志名的格式是xxx-20170623.log。
+import time
+import os
+import datetime
+def start_time(str =None,format="%Y-%m-%d"):
+    if str:
+        tp = time.strptime(str,format)#根据格式规范将字符串解析为时间元组。
+        res = time.mktime(tp) #将元组转化成时间戳
+    else:
+        res = time.time()#返回当前的时间，以秒为单位获取当前的时间戳
+    return int(res)
+def delbeforedaysfile(filepath,duration):
+    duration_new = duration.__neg__()#取负数
+    day_delduration = datetime.date.today()+datetime.timedelta(duration_new)#调整日期
+    #datetime.date.today() == 2018-06-02
+    #datetime.timedelta(10)
+    #day_delduration = 2018-06-02减少10天
+    for abspath,dir,file in os.walk(filepath):
+        for filename in file:
+            if filename.split(".")[1] == 'log':
+                filename_del =os.path.join(abspath,filename)
+                front_filename = filename.split(".")[0]
+                date_filename = front_filename.split("_")[2]
+                #切割2次获取时间
+                if start_time(str(day_delduration))>start_time(str=date_filename,format='%Y%m%d'):
+                    os.remove(filename_del)
+                    print("删除%d天前的文件%s成功"%(duration,filename))
